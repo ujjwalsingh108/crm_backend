@@ -4,6 +4,9 @@ import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 
+// Users module
+import { UsersModule } from '../modules/users/users.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +28,7 @@ import { AppService } from './app.service';
         },
       },
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
