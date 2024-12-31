@@ -1,44 +1,51 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 
 @Entity('USERS')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  tenantId: number;
-
-  @Column()
-  firstName: string;
-
-  @Column({ nullable: true })
-  middleName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column({ unique: true })
-  email: string;
-
-  @Column()
-  password: string;
-
-  @Column()
-  phone: string;
-
-  @Column({ default: true })
-  isActive: boolean;
-
-  @Column()
-  role: string;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updatedAt: Date;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => Tenant, (tenant) => tenant.users)
+  @JoinColumn({ name: 'TENANT_ID' })
   tenant: Tenant;
+
+  @Column({ name: 'TENANT_ID', type: 'uniqueidentifier' })
+  tenantId: string;
+
+  @Column({ name: 'FIRST_NAME' })
+  firstName: string;
+
+  @Column({ name: 'MIDDLE_NAME' })
+  middleName: string;
+
+  @Column({ name: 'LAST_NAME' })
+  lastName: string;
+
+  @Column({ name: 'EMAIL', unique: true })
+  email: string;
+
+  @Column({ name: 'PASSWORD' })
+  password: string;
+
+  @Column({ name: 'PHONE', nullable: true })
+  phone: string;
+
+  @Column({ name: 'IS_ACTIVE', default: true })
+  isActive: boolean;
+
+  @Column({ name: 'ROLE' })
+  role: string;
+
+  @Column({ name: 'CREATED_AT', type: 'timestamp', default: () => 'GETDATE()' })
+  createdAt: Date;
+
+  @Column({ name: 'UPDATED_AT', type: 'timestamp', default: () => 'GETDATE()' })
+  updatedAt: Date;
 }
