@@ -17,10 +17,8 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { email, firstName, lastName, phone, password, role } = createUserDto;
 
-    // Check if a tenant with the same email already exists
     let tenant = await this.tenantRepository.findOne({ where: { email } });
 
-    // If not, create a new tenant
     if (!tenant) {
       tenant = this.tenantRepository.create({
         name: `${firstName} ${lastName}`,
@@ -31,13 +29,12 @@ export class UsersService {
       tenant = await this.tenantRepository.save(tenant);
     }
 
-    // Create the user linked to the tenant
     const user = this.userRepository.create({
       firstName,
       lastName,
       email,
       phone,
-      password, // You should hash the password in production
+      password,
       tenantId: tenant.id,
       role,
       isActive: true,
