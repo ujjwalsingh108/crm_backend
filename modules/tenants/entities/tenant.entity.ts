@@ -29,14 +29,14 @@ export class Tenant {
 
   @Column({
     name: 'CREATED_AT',
-    type: 'timestamp',
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
   @Column({
     name: 'UPDATED_AT',
-    type: 'timestamp',
+    type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;

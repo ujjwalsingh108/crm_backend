@@ -43,9 +43,9 @@ export class User {
   @Column({ name: 'ROLE' })
   role: string;
 
-  @Column({ name: 'CREATED_AT', type: 'timestamp', default: () => 'GETDATE()' })
+  @Column({ name: 'CREATED_AT', type: 'datetime', default: () => 'GETDATE()' })
   createdAt: Date;
 
-  @Column({ name: 'UPDATED_AT', type: 'timestamp', default: () => 'GETDATE()' })
+  @Column({ name: 'UPDATED_AT', type: 'datetime', default: () => 'GETDATE()' })
   updatedAt: Date;
 }
