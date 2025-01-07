@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from 'modules/users/users.module';
 
 @Module({
   imports: [
@@ -10,23 +9,20 @@ import { AppService } from './app.service';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: process.env.SERVER_TYPE as 'mssql',
-      host: process.env.SERVER_NAME,
+      type: 'mssql',
+      host: 'localhost',
       port: 1433,
-      database: process.env.DB_NAME,
-      entities: [],
-      synchronize: true,
+      username: 'sa',
+      password: '123456',
+      database: 'crm',
+      autoLoadEntities: true,
+      // synchronize: true,
       options: {
-        encrypt: true,
-      },
-      extra: {
-        authentication: {
-          type: 'NTLM',
-        },
+        encrypt: false,
+        enableArithAbort: true,
       },
     }),
+    UsersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
