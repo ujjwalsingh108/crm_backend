@@ -77,3 +77,13 @@ export class Tenant {
   @Column({ name: 'ADDRESS_ID', type: 'uniqueidentifier', nullable: true })
   addressID: string;
 }
+
+/**
+ *
+ *
+ * state -> state master
+ * country -> country master
+ * pincode
+ * tin ->  Tax identification number
+ * gst
+ */

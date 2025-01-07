@@ -16,7 +16,6 @@ import { UsersModule } from 'modules/users/users.module';
       password: '123456',
       database: 'crm',
       autoLoadEntities: true,
-      // synchronize: true,
       options: {
         encrypt: false,
         enableArithAbort: true,
