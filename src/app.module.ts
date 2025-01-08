@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from '../modules/authentication/auth.module';
 import { UsersModule } from 'modules/users/users.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { UsersModule } from 'modules/users/users.module';
         enableArithAbort: true,
       },
     }),
+    AuthModule,
     UsersModule,
   ],
 })

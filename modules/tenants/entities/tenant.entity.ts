@@ -4,54 +4,54 @@ import { User } from '../../users/entities/user.entity';
 @Entity('TENANTS')
 export class Tenant {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id?: string;
 
   @OneToMany(() => User, (user) => user.tenant)
-  users: User[];
+  users?: User[];
 
   @Column({ name: 'NAME' })
-  name: string;
+  name?: string;
 
   @Column({ name: 'INDUSTRY', nullable: true })
-  industry: string;
+  industry?: string;
 
   @Column({ name: 'PHONE' })
-  phone: string;
+  phone?: string;
 
   @Column({ name: 'EMAIL', unique: true })
-  email: string;
+  email?: string;
 
   @Column({ name: 'WEBSITE', nullable: true })
-  website: string;
+  website?: string;
 
   @Column({ name: 'LOGO_URL', nullable: true })
-  logoUrl: string;
+  logoUrl?: string;
 
   @Column({
     name: 'CREATED_AT',
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createdAt: Date;
+  createdAt?: Date;
 
   @Column({
     name: 'UPDATED_AT',
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @Column({ name: 'IS_ACTIVE', default: true })
-  isActive: boolean;
+  isActive?: boolean;
 
   @Column({ name: 'TAX_ID', nullable: true })
-  taxId: string;
+  taxId?: string;
 
   @Column({ name: 'PAN', nullable: true })
-  pan: string;
+  pan?: string;
 
   @Column({ name: 'CIN', nullable: true })
-  cin: string;
+  cin?: string;
 
   @Column({
     name: 'ANNUAL_REVENUE',
@@ -60,22 +60,22 @@ export class Tenant {
     scale: 2,
     nullable: true,
   })
-  annualRevenue: number;
+  annualRevenue?: number;
 
   @Column({ name: 'NUMBER_OF_EMPLOYEES', nullable: true })
-  numberOfEmployees: number;
+  numberOfEmployees?: number;
 
   @Column({ name: 'CREATED_BY', nullable: true })
-  createdBy: string;
+  createdBy?: string;
 
   @Column({ name: 'UPDATED_BY', nullable: true })
-  updatedBy: string;
+  updatedBy?: string;
 
   @Column({ name: 'NOTES', nullable: true })
-  notes: string;
+  notes?: string;
 
   @Column({ name: 'ADDRESS_ID', type: 'uniqueidentifier', nullable: true })
-  addressID: string;
+  addressID?: string;
 }
 
 /**
