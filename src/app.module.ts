@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from '../modules/authentication/auth.module';
 import { UsersModule } from 'modules/users/users.module';
 
 @Module({
@@ -16,12 +17,12 @@ import { UsersModule } from 'modules/users/users.module';
       password: '123456',
       database: 'crm',
       autoLoadEntities: true,
-      // synchronize: true,
       options: {
         encrypt: false,
         enableArithAbort: true,
       },
     }),
+    AuthModule,
     UsersModule,
   ],
 })
