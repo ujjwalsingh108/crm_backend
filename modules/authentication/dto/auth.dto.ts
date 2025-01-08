@@ -11,3 +11,12 @@ export class CreateUserDto {
     this.password = password;
   }
 }
+
+export class signInDto {
+  email?: string;
+  password: string | Buffer<ArrayBufferLike>;
+
+  constructor(password: string | Buffer<ArrayBufferLike>) {
+    this.password = password;
+  }
+}

@@ -39,6 +39,17 @@ export class UsersService {
     return user;
   }
 
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found `);
+    }
+    return user;
+  }
+
   async deactivateUser(id: string): Promise<User> {
     const user = await this.findById(id);
     user.isActive = false;
