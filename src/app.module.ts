@@ -11,12 +11,12 @@ import { UsersModule } from 'modules/users/users.module';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
-      type: 'mssql',
-      host: 'localhost',
-      port: 1433,
+      type: process.env.DB_TYPE as 'mssql',
+      host: process.env.HOST,
+      port: Number(process.env.DB_PORT),
       username: 'sa',
-      password: '123456',
-      database: 'crm',
+      password: process.env.PASSWORD,
+      database: process.env.DB_NAME,
       autoLoadEntities: true,
       options: {
         encrypt: false,
