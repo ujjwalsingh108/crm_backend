@@ -8,7 +8,7 @@ import {
   Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, signInDto } from './dto/auth.dto';
+import { SignUpDto, SignInDto } from './dto/auth.dto';
 import { User } from '../users/entities/user.entity';
 import { Public } from './decorators/public.decorator';
 
@@ -16,16 +16,26 @@ import { Public } from './decorators/public.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
-  async signup(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.authService.create(createUserDto);
+  async signup(@Body() signUpDto: SignUpDto): Promise<User> {
+    return this.authService.create(signUpDto);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: signInDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(
+    @Body() signInDto: SignInDto,
+  ): Promise<{ access_token: string }> {
+    const { email, password } = signInDto;
+
+    // 1. Check if password is a Buffer and convert if necessary:
+    const passwordToCompare =
+      password && typeof password === 'string' ? password : password.toString(); // Convert Buffer to string
+
+    // 2. Call the service method:
+    return this.authService.signIn(email, passwordToCompare);
   }
 
   @Get('profile')

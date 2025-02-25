@@ -44,14 +44,17 @@ export class Tenant {
   @Column({ name: 'IS_ACTIVE', default: true })
   isActive?: boolean;
 
-  @Column({ name: 'TAX_ID', nullable: true })
-  taxId?: string;
+  @Column({ name: 'TIN', nullable: true })
+  tin?: string;
 
   @Column({ name: 'PAN', nullable: true })
   pan?: string;
 
   @Column({ name: 'CIN', nullable: true })
   cin?: string;
+
+  @Column({ name: 'GST', nullable: true })
+  gst?: string;
 
   @Column({
     name: 'ANNUAL_REVENUE',
