@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {
-    this.jwtSecretKey = this.configService.get<string>('JWT_SECRET_KEY') || '';
+    this.jwtSecretKey = this.configService.get<string>('SUPBASE_JWT_SECRET_KEY') || '';
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
