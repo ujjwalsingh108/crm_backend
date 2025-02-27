@@ -1,25 +1,22 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { User } from '../users/entities/user.entity';
-import { Tenant } from '../tenants/entities/tenant.entity';
-import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
+import { SupabaseModule } from './../../database/supabase/supabase.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Tenant]),
-    UsersModule,
+    ConfigModule,
+    SupabaseModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('SUPBASE_JWT_SECRET_KEY'),
-        signOptions: { expiresIn: '15m' },
+        secret: configService.get<string>('SUPABASE_JWT_SECRET_KEY'),
+        signOptions: { expiresIn: '6h' },
       }),
     }),
   ],
