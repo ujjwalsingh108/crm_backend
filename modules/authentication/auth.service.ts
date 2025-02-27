@@ -1,95 +1,92 @@
 import {
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
-import { Tenant } from '../tenants/entities/tenant.entity';
 import { SignUpDto } from './dto/auth.dto';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'modules/users/users.service';
+import { SupabaseService } from './../../database/supabase/supabase.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly usersService: UsersService,
-    @InjectRepository(Tenant)
-    private readonly tenantRepository: Repository<Tenant>,
     private jwtService: JwtService,
+    private supabase: SupabaseService,
   ) {}
 
-  async create(signUpDto: SignUpDto): Promise<User> {
-    try {
-      const { email, firstName, lastName, phone, password, role } =
+  async create(signUpDto: SignUpDto) {
+    const { email, password, firstName, middleName, lastName, phone, role } =
       signUpDto;
 
-      // Hash the password using bcrypt
-      const salt = await bcrypt.genSalt(12);
-      const hashedPassword = await bcrypt.hash(password, salt);
+    // Step 1: Create a tenant
+    const tenantName = `${firstName} ${lastName}`.trim();
+    const { data: tenantData, error: tenantError } = await this.supabase
+      .getClient()
+      .from('tenants')
+      .insert([{ name: tenantName, email, phone }])
+      .select('id') // Select only the ID
+      .single();
 
-      let tenant = await this.tenantRepository.findOne({ where: { email } });
+    if (tenantError) {
+      throw new InternalServerErrorException(
+        `Tenant creation failed: ${tenantError.message}`,
+      );
+    }
 
-      if (!tenant) {
-        tenant = this.tenantRepository.create({
-          name: `${firstName} ${lastName}`,
-          email,
+    const tenantId = tenantData.id; // Get the newly created tenant ID
+
+    // Step 2: Sign up the user in Supabase Auth with the tenant ID
+    const { data, error } = await this.supabase.getAuthClient().signUp({
+      email,
+      password,
+      options: {
+        data: {
+          firstName,
+          middleName,
+          lastName,
           phone,
-          isActive: true,
-        });
-        tenant = await this.tenantRepository.save(tenant);
-      }
+          tenant_id: tenantId,
+          role,
+        }, // Store tenant ID in metadata
+      },
+    });
 
-      const user = this.userRepository.create({
-        firstName,
-        lastName,
+    if (error) {
+      throw new InternalServerErrorException(
+        `User sign-up failed: ${error.message}`,
+      );
+    }
+
+    return data.user;
+  }
+
+  async signIn(email: string, password: string) {
+    const { data, error } = await this.supabase
+      .getAuthClient()
+      .signInWithPassword({
         email,
-        phone,
-        password: hashedPassword,
-        tenantId: tenant.id,
-        role,
-        isActive: true,
+        password,
       });
 
-      return this.userRepository.save(user);
-    } catch (error) {
-      console.log('Error creating user:', error);
-      throw new InternalServerErrorException('Failed to create user');
-    }
-  }
-
-  async signIn(
-    email?: string,
-    password?: string | undefined,
-  ): Promise<{ access_token: string }> {
-    // 1. Check if email or password are provided
-    if (!email || !password) {
-      throw new UnauthorizedException('Email and password are required');
-    }
-
-    const user = await this.usersService.findByEmail(email);
-
-    // 2. Check if user exists *before* comparing password
-    if (!user) {
+    if (error) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // 3. Compare password
-    const isMatch = user.password && bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const payload = { id: user.id, email: user.email, role: user.role };
+    // Supabase already provides a session token
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      session: data.session, // Contains access_token, refresh_token
+      user: data.user, // User details
+      redirectUrl: 'http://localhost:3000/profile', // Redirect URL after login
     };
   }
-}
 
-// implement refresh token for continuous access
+  async deleteAuthUser(id: string) {
+    const { error } = await this.supabase.getAuthClient().admin.deleteUser(id);
+
+    if (error) {
+      console.log(`Error deleting user: ${error.message}`);
+    } else {
+      console.log('User deleted successfully');
+    }
+  }
+}
